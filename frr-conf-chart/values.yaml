@@ -1,15 +1,16 @@
-# The Inventory List
-nodes:
-  - hostname: "node01"        # Must match label 'kubernetes.io/hostname'
-    routerId: "192.168.10.11"    # Unique Router ID for this node
-    dummyInterfaceIp: "192.168.10.11"   # The Interface IP for dummy0
-    bgpAS: "65002"
-    interface-1: "ens19"
- # - hostname: "node02"        # Must match label 'kubernetes.io/hostname'
- #   routerId: "192.168.10.12"    # Unique Router ID for this node
- #   interfaceIp: "192.168.10.12"   # The Interface IP for dummy0
- #   bgpAS: "65002"
- # - hostname: "node03"        # Must match label 'kubernetes.io/hostname'
- #   routerId: "192.168.10.13"    # Unique Router ID for this node
- #   interfaceIp: "192.168.10.13"   # The Interface IP for dummy0
- #   bgpAS: "65003"
+defaultNamespace: frr-test
+helm:
+  chart: ./frr-conf-chart
+  values:
+    # You can override the inventory here if you want
+    nodes:
+      - hostname: "ubuntu"        # Must match label 'kubernetes.io/hostname'
+        routerId: "192.168.10.11"    # Unique Router ID for this node
+        dummyInterfaceIp: "192.168.10.11"   # The Interface IP for dummy0
+        bgpAS: "64530"
+        interface-1: "ens19"
+      - hostname: "ubuntu-2"        # Must match label 'kubernetes.io/hostname'
+        routerId: "192.168.10.12"    # Unique Router ID for this node
+        interfaceIp: "192.168.10.12"   # The Interface IP for dummy0
+        bgpAS: "64530"
+        interface-1: "ens20"
