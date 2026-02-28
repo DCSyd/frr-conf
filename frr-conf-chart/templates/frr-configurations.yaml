@@ -19,38 +19,54 @@ spec:
   # ---------------------------------------------------------
   raw:
     rawConfig: |-   
-        interface enp33s0f1np1
-        ipv6 nd ra-interval 6
-        no ipv6 nd suppress-ra
-        exit
-        !
-        interface eno12409np1
-        ipv6 nd ra-interval 6
-        no ipv6 nd suppress-ra
-        exit
-        !
-        interface dummy0
-        ip address {{ .interfaceIp }}
-        exit
-        !
-        router bgp {{ .bgpAS }}
+      interface {{ .interface-1 }}
+      ipv6 nd ra-interval 6
+      no ipv6 nd suppress-ra
+      exit
+      !
+      interface dummy0
+      ip address {{ .dummyInterfaceIp }}
+      exit
+      !
+      ip prefix-list pl-pod-cidr seq 10 permit 10.42.0.0/16 ge 24 le 24
+      ip prefix-list pl-lo-cidr seq 10 permit 1.1.1.0/24 ge 32 le 32
+      ip prefix-list pl-svc-cidr seq 10 permit 10.43.0.0/16 ge 16 le 32
+      !
+      route-map rm-adv-out permit 10
+      match ip address prefix-list pl-pod-cidr
+      match interface cilium_host
+      !
+      route-map rm-adv-out permit 20
+      match ip address prefix-list pl-svc-cidr
+      !
+      route-map rm-adv-out permit 30
+      match ip address prefix-list pl-lo-cidr
+      !
+      ip prefix-list pl-ext seq 10 permit 10.42.0.0/16 ge 24 le 24
+      ip prefix-list pl-ext seq 20 permit 10.0.1.0/24
+      !
+      route-map rm-pl-ext permit 10
+      match ip address prefix-list pl-ext
+      !
+      router bgp {{ .bgpAS }}
         bgp router-id {{ .routerId }}
         bgp bestpath as-path multipath-relax
         neighbor TOR peer-group
         neighbor TOR remote-as internal
-        neighbor TOR bfd
+        #neighbor TOR bfd
         neighbor TOR timers 1 3
-        neighbor enp33s0f1np1 interface peer-group TOR
-        neighbor eno12409np1 interface peer-group TOR
+        neighbor TOR soft-reconfiguration inbound
+        neighbor {{ .interface-1 }}  interface v6only peer-group TOR 
+        #neighbor {{ .interface-2 }} interface v6only peer-group TOR
         bgp fast-convergence
-        !
-        address-family ipv4 unicast
-        network 10.93.101.0/24
-        redistribute kernel
-        redistribute connected
-        neighbor enp33s0f1np1 soft-reconfiguration inbound
-        neighbor eno12409np1 soft-reconfiguration inbound
-        exit-address-family
-        exit
-        !
+      !
+      address-family ipv4 unicast
+      network 10.43.0.0/16
+      redistribute kernel
+      redistribute connected
+      neighbor TOR route-map rm-adv-out out
+      neighbor TOR route-map rm-pl-ext in
+      exit-address-family
+      exit
+      !
 {{- end }}
