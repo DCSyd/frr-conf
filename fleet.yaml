@@ -1,4 +1,4 @@
-defaultNamespace: frr-test
+defaultNamespace: frr-k8s
 helm:
   chart: ./frr-conf-chart
   values:
@@ -6,9 +6,11 @@ helm:
     nodes:
       - hostname: "ubuntu"        # Must match label 'kubernetes.io/hostname'
         routerId: "192.168.10.11"    # Unique Router ID for this node
-        interfaceIp: "192.168.10.11"   # The Interface IP for dummy0
-        bgpAS: "65002"
+        dummyInterfaceIp: "192.168.10.11"   # The Interface IP for dummy0
+        bgpAS: "64530"
+        interface-1: "ens19"
       - hostname: "ubuntu-2"        # Must match label 'kubernetes.io/hostname'
         routerId: "192.168.10.12"    # Unique Router ID for this node
         interfaceIp: "192.168.10.12"   # The Interface IP for dummy0
-        bgpAS: "65002"
+        bgpAS: "64530"
+        interface-1: "ens20"
