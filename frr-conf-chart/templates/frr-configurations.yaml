@@ -71,5 +71,4 @@ spec:
       neighbor TOR route-map rm-pl-ext in
       exit-address-family
       exit
-      !
 {{- end }}
