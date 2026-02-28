@@ -1,18 +1,21 @@
-{{- range .Values.nodes }}
+#{{- range .Values.nodes }}
+{{- range $nodeName, $config := .Values.nodes }}
 ---
 apiVersion: frrk8s.metallb.io/v1beta1
 kind: FRRConfiguration
 metadata:
   # Generate a unique name for the resource (e.g., frr-conf-worker-01)
-  name: frr-conf-{{ .hostname }}
-#  namespace: frr-k8s
+  name: frr-conf-{{ $nodeName }}  
+  namespace: frr-k8s
+  labels:
+    managed-by: helm
 spec:
   # ---------------------------------------------------------
   # TARGETING LOGIC: Apply this config ONLY to this specific node
   # ---------------------------------------------------------
   nodeSelector:
     matchLabels:
-      kubernetes.io/hostname: {{ .hostname }}
+      kubernetes.io/hostname: {{ $nodeName }}
 
   # ---------------------------------------------------------
   # BGP CONFIGURATION
