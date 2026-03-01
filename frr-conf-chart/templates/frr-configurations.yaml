@@ -1,4 +1,3 @@
-#{{- range .Values.nodes }}
 {{- range $nodeName, $config := .Values.nodes }}
 ---
 apiVersion: frrk8s.metallb.io/v1beta1
@@ -22,13 +21,13 @@ spec:
   # ---------------------------------------------------------
   raw:
     rawConfig: |-   
-      interface {{ .Values "interface-1" }}
+      interface {{ index $config "interface-1" }}
       ipv6 nd ra-interval 6
       no ipv6 nd suppress-ra
       exit
       !
       interface dummy0
-      ip address {{ .Values "dummyInterfaceIp" }}
+      ip address {{ $config.dummyInterfaceIp }}
       exit
       !
       ip prefix-list pl-pod-cidr seq 10 permit 10.42.0.0/16 ge 24 le 24
@@ -51,16 +50,16 @@ spec:
       route-map rm-pl-ext permit 10
       match ip address prefix-list pl-ext
       !
-      router bgp {{ .Values "bgpAS" }}
-        bgp router-id {{ .Values "routerId" }}
+      router bgp {{ $config.bgpAS }}
+        bgp router-id {{ $config.routerId }}
         bgp bestpath as-path multipath-relax
         neighbor TOR peer-group
         neighbor TOR remote-as internal
         #neighbor TOR bfd
         neighbor TOR timers 1 3
         neighbor TOR soft-reconfiguration inbound
-        neighbor {{ .Values "interface-1" }}  interface v6only peer-group TOR 
-        #neighbor {{ .Values "interface-2" }} interface v6only peer-group TOR
+        neighbor {{ index $config "interface-1" }} interface v6only peer-group TOR 
+        #neighbor {{ index $config "interface-2" }} interface v6only peer-group TOR
         bgp fast-convergence
       !
       address-family ipv4 unicast
