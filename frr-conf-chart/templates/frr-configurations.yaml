@@ -5,7 +5,7 @@ kind: FRRConfiguration
 metadata:
   # Generate a unique name for the resource (e.g., frr-conf-worker-01)
   name: frr-conf-{{ $nodeName }}  
-  namespace: frr-k8s
+  namespace: frr-k8s-test
   labels:
     managed-by: helm
 spec:
