@@ -1,4 +1,4 @@
-defaultNamespace: frr-k8s
+defaultNamespace: frr-k8s-test
 helm:
   chart: ./frr-conf-chart
   values:
