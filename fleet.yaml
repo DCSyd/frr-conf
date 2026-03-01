@@ -11,6 +11,6 @@ helm:
         interface-1: "ens19"
       ubuntu-2:      # Must match label 'kubernetes.io/hostname'
         routerId: "192.168.10.12"    # Unique Router ID for this node
-        interfaceIp: "192.168.10.12"   # The Interface IP for dummy0
+        dummyInterfaceIp: "192.168.10.12"   # The Interface IP for dummy0
         bgpAS: "64530"
         interface-1: "ens20"
